@@ -1,0 +1,60 @@
+server {
+  listen 80 default_server; # IPv4
+  # listen [fe80::202:b3ff:fe1e:8328]:80 default_server ipv6only=on; # IPv6
+  server_name _;
+  return 301 https://$host$request_uri;
+  limit_conn arbeit 32;
+  ## Access and error logs.
+  access_log /var/log/supervisor/nginx-access.log;
+  error_log /var/log/supervisor/nginx-error.log;
+  ## See the blacklist.conf file at the parent dir: /etc/nginx.
+  ## Deny access based on the User-Agent header.
+  if ($bad_bot) {
+      return 444;
+  }
+  ## Deny access based on the Referer header.
+  if ($bad_referer) {
+      return 444;
+  }
+  ## Filesystem root of the site and index.
+  root /var/www;
+  index index.php;
+  fastcgi_keep_conn on; # keep alive to the FCGI upstream
+  include drupal.conf;
+  include drupal_upload_progress.conf;
+}
+server {
+  listen 443 ssl spdy; # IPv4
+  # listen [fe80::202:b3ff:fe1e:8328]:80 default_server ipv6only=on; # IPv6
+  server_name _;
+  limit_conn arbeit 32;
+
+  add_header Strict-Transport-Security max-age=31536000;
+  add_header X-Frame-Options SAMEORIGIN;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
+ #ssl_certificate /etc/ssl/private/bundle.crt;
+ #ssl_trusted_certificate /etc/ssl/private/chain.pem;
+ #ssl_certificate_key /etc/ssl/private/key.key;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !
+eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4";
+  ## Access and error logs.
+  access_log /var/log/supervisor/nginx-access.log;
+  error_log /var/log/supervisor/nginx-error.log;
+  ## See the blacklist.conf file at the parent dir: /etc/nginx.
+  ## Deny access based on the User-Agent header.
+  if ($bad_bot) {
+      return 444;
+  }
+  ## Deny access based on the Referer header.
+  if ($bad_referer) {
+      return 444;
+  }
+  ## Filesystem root of the site and index.
+  root /var/www;
+  index index.php;
+  fastcgi_keep_conn on; # keep alive to the FCGI upstream
+  include drupal.conf;
+  include drupal_upload_progress.conf;
+}

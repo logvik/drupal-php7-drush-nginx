@@ -1,0 +1,24 @@
+mysql:
+  hostname: mysql
+  build: ./mysql
+  ports:
+    - "3306"
+  volumes:
+    - /opt/sql:/opt/sql
+    - /opt/mysql:/var/lib/mysql
+    - /opt/logs:/var/log/supervisor
+  environment:
+    MYSQL_ROOT_PASSWORD: VjqGfhjkm123?!
+web:
+  hostname: web
+  build: ./docker-nginx-drupal
+  volumes:
+    - /opt/app:/var/www
+    - /opt/nginx:/etc/nginx
+    - /opt/ssl:/etc/ssl/private
+    - /opt/logs:/var/log/supervisor
+  ports:
+    - "80:80"
+    - "443:443"
+  links:
+    - mysql
