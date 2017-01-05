@@ -24,7 +24,7 @@ server {
   include drupal_upload_progress.conf;
 }
 server {
-  listen 443 ssl spdy; # IPv4
+  listen 443 ssl http2; # IPv4 spdy
   # listen [fe80::202:b3ff:fe1e:8328]:80 default_server ipv6only=on; # IPv6
   server_name _;
   limit_conn arbeit 32;
