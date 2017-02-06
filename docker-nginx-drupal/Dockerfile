@@ -10,6 +10,7 @@ ENV LC_ALL     en_US.UTF-8
 
 # Update system
 RUN apt-get update && apt-get dist-upgrade -y
+RUN apt-get install -y nano
 
 # Prevent restarts when installing
 RUN echo '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
